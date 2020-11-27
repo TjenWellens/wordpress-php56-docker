@@ -13,7 +13,7 @@ Running WordPress on PHP-5.6 with MySQL-5.7 on Docker container
 4) Create a file `./.env` (*1)
 5) (optional) add line to sql (*2)
 6) run
-7) when all is running, change base url to `localhost:808` (*3)
+7) when all is running, change base url to `localhost:8080` (*3)
 
 (*1) `.env` file should look something like this:
 ```
@@ -35,6 +35,19 @@ SET SQL_MODE='ALLOW_INVALID_DATES';
 * siteurl
 
 to `localhost:8080` instead of `your-domain.com`
+
+Or you can change the sql file for those entries:
+```
+# old
+ INSERT INTO `wp_options` VALUES("1","siteurl","http://your-domain.com","yes");
+# new
+ INSERT INTO `wp_options` VALUES("1","siteurl","http://localhost:8080","yes");
+
+# old
+ INSERT INTO `wp_options` VALUES("37","home","http://your-domain.com","yes");
+# new
+ INSERT INTO `wp_options` VALUES("37","home","http://localhost:8080","yes");
+```
 
 
 ## Running container
