@@ -5,26 +5,39 @@ services:
     db:
         # mysql/mysql-server is less in size than mysql
         image: mysql/mysql-server:5.7
+        volumes:
+            - ./wordpress.sql:/docker-entrypoint-initdb.d/init.sql # prepopulate database
+            - ./db_data:/var/lib/mysql # persist database data inside docker storage
         restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: rootpass
-            MYSQL_DATABASE: wordpress
-            MYSQL_USER: wordpress
-            MYSQL_PASSWORD: wordpress
+        env_file:
+            - .env
+        container_name: wp_db
 
     wordpress:
         build:
             context: .
             args:
                 WORDPRESS_DB_HOST: db:3306
-                WORDPRESS_DB_NAME: wordpress
-                WORDPRESS_DB_USER: wordpress
-                WORDPRESS_DB_PASSWORD: wordpress
+                WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+                WORDPRESS_DB_USER: ${MYSQL_USER}
+                WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
         ports:
             - "8080:80"
         depends_on:
             - db
-        #volumes:
-        #    # Mapping parent directory of the plugin to /src
-        #    - .:/var/www/html
+        volumes:
+            - ./public_html:/var/www/html
+#            - ./000-default.conf:/etc/apache2/sites-available/000-default.conf
         restart: always
+        container_name: wp_wordpress
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        ports:
+            - "8090:80"
+        environment:
+            PMA_HOST: db
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            DOCKER_COMPOSE_YML_LOCATION: ${PWD}
+        container_name: wp_phpmyadmin

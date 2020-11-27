@@ -4,8 +4,37 @@ Running WordPress on PHP-5.6 with MySQL-5.7 on Docker container
 
 ## Motivation
 
-- WordPress plugins/themes developers often need to make sure their plugins/themes are also compatible with php5.6
-- Official WordPress docker image support start from php7.2
+- PHP for my site was updated to 7.2, but that broke my (long-time-not-updated) wordpress setup
+
+## Prerequisites
+1) Have an export of your db ; name the file `./wordpress.sql`
+2) Have a copy of your entire wordpress installation ; put it in ./public_html/
+3) Create an empty folder ./db_data
+4) Create a file `./.env` (*1)
+5) (optional) add line to sql (*2)
+6) run
+7) when all is running, change base url to `localhost:808` (*3)
+
+(*1) `.env` file should look something like this:
+```
+MYSQL_ROOT_PASSWORD=wordpress
+MYSQL_DATABASE=wordpress
+MYSQL_USER=wordpress
+MYSQL_PASSWORD=wordpress
+```
+(I filled in the actual values I used on the server)
+
+
+(*2) My database could not load the ./wordpress.sql script. I needed to add the following line to the top of `./wordpress.sql`
+```
+SET SQL_MODE='ALLOW_INVALID_DATES';
+```
+
+(*3) Open phpmyadmin(http://localhost:8090/) and change in table `wp_options`
+* home
+* siteurl
+
+to `localhost:8080` instead of `your-domain.com`
 
 
 ## Running container
@@ -19,17 +48,6 @@ Running containers:
 docker-compose up
 ```
 
-Running container in the background -d flag (for “detached” mode)
-```sh
-docker-compose up -d
-```
-
-Running with build:
-```sh
-docker-compose up -d --build
-```
-
-
 ## Executing bash of wordpress container
 ```sh
 docker-compose exec wordpress bash
@@ -37,8 +55,6 @@ docker-compose exec wordpress bash
 
 
 ## Stop services
-`docker-compose stop`
-or
 `docker-compose down`
 
 
@@ -46,6 +62,9 @@ or
 
 http://localhost:8080/
 
+## Access PhpMyAdmin
+
+http://localhost:8090/
 
 ## Reference
 

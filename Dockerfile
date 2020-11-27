@@ -32,6 +32,8 @@ COPY entrypoint.sh /entrypoint.sh
 # makes the script executable
 RUN chmod +x /entrypoint.sh
 
+RUN a2enmod rewrite
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["apache2-foreground"]
